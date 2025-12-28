@@ -8,7 +8,7 @@ This repository contains a FastAPI-based web application for Mergington High Sch
 
 - **Backend**: Python with FastAPI framework
 - **Frontend**: HTML, CSS, JavaScript (vanilla)
-- **Components**: React/TypeScript components (WalletCard.tsx)
+- **Components**: React/TypeScript components (note: WalletCard.tsx appears to be example/legacy code for cryptocurrency balances, not currently integrated with the main application)
 - **Server**: Uvicorn ASGI server
 
 ## Project Structure
@@ -59,7 +59,7 @@ The application will be available at:
 |--------|----------|-------------|
 | GET | `/` | Redirects to main HTML page |
 | GET | `/activities` | Get all activities with details and participants |
-| POST | `/activities/{activity_name}/signup?email=student@mergington.edu` | Sign up for an activity |
+| POST | `/activities/{activity_name}/signup?email=student@mergington.edu` | Sign up for an activity (Note: Currently does not validate duplicates or capacity limits) |
 
 ## Coding Guidelines
 
@@ -100,6 +100,11 @@ The application will be available at:
 3. **Static Files**: Static assets are mounted at `/static` and served from `src/static/` directory
 
 4. **Error Handling**: Use FastAPI's HTTPException for API errors with appropriate status codes
+
+5. **Current Limitations**: 
+   - The signup endpoint does not check if a student is already signed up for an activity (allows duplicates)
+   - The signup endpoint does not enforce the `max_participants` limit
+   - These are potential areas for improvement
 
 ## Testing
 
