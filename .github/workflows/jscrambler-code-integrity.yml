@@ -24,11 +24,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Check Jscrambler configuration
+        id: check-jscrambler
+        env:
+          JSCRAMBLER_APPLICATION_ID: ${{ secrets.JSCRAMBLER_APPLICATION_ID }}
+          JSCRAMBLER_SECRET_KEY: ${{ secrets.JSCRAMBLER_SECRET_KEY }}
+          JSCRAMBLER_ACCESS_KEY: ${{ secrets.JSCRAMBLER_ACCESS_KEY }}
+        run: |
+          if [ -n "$JSCRAMBLER_APPLICATION_ID" ] && [ -n "$JSCRAMBLER_SECRET_KEY" ] && [ -n "$JSCRAMBLER_ACCESS_KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Skip when Jscrambler secrets are unavailable
-        if: ${{ secrets.JSCRAMBLER_APPLICATION_ID == '' || secrets.JSCRAMBLER_SECRET_KEY == '' || secrets.JSCRAMBLER_ACCESS_KEY == '' }}
+        if: ${{ steps.check-jscrambler.outputs.configured != 'true' }}
         run: echo "Skipping Jscrambler protection because required secrets are not configured."
       - name: Jscrambler Code Integrity
-        if: ${{ secrets.JSCRAMBLER_APPLICATION_ID != '' && secrets.JSCRAMBLER_SECRET_KEY != '' && secrets.JSCRAMBLER_ACCESS_KEY != '' }}
+        if: ${{ steps.check-jscrambler.outputs.configured == 'true' }}
+        # Pinned commit from the upstream example for supply-chain safety.
         uses: jscrambler/code-integrity-actions/protect@ab65962a2ecffcc362b75a997e24a181d0bde5fb
         with:
           application-id: ${{ secrets.JSCRAMBLER_APPLICATION_ID }}
